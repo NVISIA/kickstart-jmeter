@@ -1,0 +1,35 @@
+plugins {
+    id "net.foragerr.jmeter" version "1.0.7-3.0-BETA"
+}
+
+apply plugin: 'java'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}
+
+jmeter {
+    jmTestFiles = [file("src/test/jmeter/jmeter-test1.jmx")] //if jmx file is not in the default location
+    jmSystemPropertiesFiles= [file("src/test/jmeter/jmeter.properties")] //to add additional system properties
+    enableExtendedReports = true //produce Graphical and CSV reports
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    // Add things you want in JMeter's path
+    //compile 'org.postgresql:postgresql:9.4.1210'
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/jmeter/lib"
+    from configurations.runtime
+}
+
+jmRun.dependsOn copyToLib
+jmGui.dependsOn copyToLib
+
+defaultTasks 'jmGui'
